@@ -124,7 +124,119 @@ class BaseResource(object):
         response = errors.json_error(self.request.errors)
         raise response
 
-    def fetch_records(self):
+    #
+    # End-points
+    #
+
+    @resource.view(
+        permission='readonly',
+        cors_headers=('Next-Page', 'Total-Records', 'Last-Modified')
+    )
+    def collection_get(self):
+        self._add_timestamp_header(self.request.response)
+        self._raise_304_if_not_modified()
+        self._raise_412_if_modified()
+
+        records, total_records, next_page = self.get_records()
+
+        headers = self.request.response.headers
+        headers['Total-Records'] = ('%s' % total_records).encode('utf-8')
+
+        if next_page:
+            headers['Next-Page'] = next_page.encode('utf-8')
+
+        body = {
+            'items': records,
+        }
+
+        return body
+
+    @resource.view(permission='readwrite')
+    def collection_post(self):
+        self._raise_412_if_modified()
+
+        new_record = self.process_record(self.request.validated)
+        record = self.create_record(new_record)
+        self.request.response.status_code = 201
+        return record
+
+    @resource.view(permission='readwrite')
+    def collection_delete(self):
+        settings = self.request.registry.settings
+        enabled = settings.get('cliquet.delete_collection_enabled', 'true')
+        if not native_value(enabled):
+            raise HTTPMethodNotAllowed()
+
+        self._raise_412_if_modified()
+
+        deleted = self.delete_records()
+
+        body = {
+            'items': deleted,
+        }
+
+        return body
+
+    @resource.view(permission='readonly', cors_headers=('Last-Modified',))
+    def get(self):
+        self._add_timestamp_header(self.request.response)
+        record = self.get_record(self.record_id)
+        self._raise_304_if_not_modified(record)
+        self._raise_412_if_modified(record)
+
+        return record
+
+    @resource.view(permission='readwrite')
+    def put(self):
+        try:
+            existing = self.get_record(self.record_id)
+            self._raise_412_if_modified(existing)
+        except HTTPNotFound:
+            existing = None
+
+        new_record = self.request.validated
+
+        new_id = new_record.setdefault(self.id_field, self.record_id)
+        if new_id != self.record_id:
+            error_msg = 'Record id does not match existing record'
+            self.raise_invalid(name=self.id_field, description=error_msg)
+
+        new_record = self.process_record(new_record, old=existing)
+        record = self.update_record(new_record, existing)
+        return record
+
+    @resource.view(permission='readwrite')
+    def patch(self):
+        record = self.get_record(self.record_id)
+        self._raise_412_if_modified(record)
+
+        changes = self.request.json
+
+        updated = self.apply_changes(record, changes=changes)
+
+        updated = self.process_record(updated, old=record)
+
+        nothing_changed = not any([record.get(k) != updated.get(k)
+                                   for k in changes.keys()])
+        if nothing_changed:
+            return record
+
+        record = self.update_record(updated, old=record)
+        return record
+
+    @resource.view(permission='readwrite')
+    def delete(self):
+        record = self.get_record(self.record_id)
+        self._raise_412_if_modified(record)
+
+        deleted = self.delete_record(record)
+        return deleted
+
+    #
+    # Storage
+    #
+
+    def get_records(self):
         """Fetch the collection records, using querystring arguments for
         sorting, filtering and pagination.
 
@@ -290,6 +402,10 @@ class BaseResource(object):
             for field, error in e.asdict().items():
                 self.request.errors.add('body', name=field, description=error)
             raise errors.json_error(self.request.errors)
+
+    #
+    # Internals
+    #
 
     def _add_timestamp_header(self, response):
         """Add current timestamp in response headers, when request comes in.
@@ -532,111 +648,3 @@ class BaseResource(object):
             token[field] = last_record[field]
 
         return encode_token(token)
-
-    #
-    # End-points
-    #
-
-    @resource.view(
-        permission='readonly',
-        cors_headers=('Next-Page', 'Total-Records', 'Last-Modified')
-    )
-    def collection_get(self):
-        self._add_timestamp_header(self.request.response)
-        self._raise_304_if_not_modified()
-        self._raise_412_if_modified()
-
-        records, total_records, next_page = self.fetch_records()
-
-        headers = self.request.response.headers
-        headers['Total-Records'] = ('%s' % total_records).encode('utf-8')
-
-        if next_page:
-            headers['Next-Page'] = next_page.encode('utf-8')
-
-        body = {
-            'items': records,
-        }
-
-        return body
-
-    @resource.view(permission='readwrite')
-    def collection_post(self):
-        self._raise_412_if_modified()
-
-        new_record = self.process_record(self.request.validated)
-        record = self.create_record(new_record)
-        self.request.response.status_code = 201
-        return record
-
-    @resource.view(permission='readwrite')
-    def collection_delete(self):
-        settings = self.request.registry.settings
-        enabled = settings.get('cliquet.delete_collection_enabled', 'true')
-        if not native_value(enabled):
-            raise HTTPMethodNotAllowed()
-
-        self._raise_412_if_modified()
-
-        deleted = self.delete_records()
-
-        body = {
-            'items': deleted,
-        }
-
-        return body
-
-    @resource.view(permission='readonly', cors_headers=('Last-Modified',))
-    def get(self):
-        self._add_timestamp_header(self.request.response)
-        record = self.fetch_record(self.record_id)
-        self._raise_304_if_not_modified(record)
-        self._raise_412_if_modified(record)
-
-        return record
-
-    @resource.view(permission='readwrite')
-    def put(self):
-        try:
-            existing = self.fetch_record(self.record_id)
-            self._raise_412_if_modified(existing)
-        except HTTPNotFound:
-            existing = None
-
-        new_record = self.request.validated
-
-        new_id = new_record.setdefault(self.id_field, self.record_id)
-        if new_id != self.record_id:
-            error_msg = 'Record id does not match existing record'
-            self.raise_invalid(name=self.id_field, description=error_msg)
-
-        new_record = self.process_record(new_record, old=existing)
-        record = self.update_record(new_record, existing)
-        return record
-
-    @resource.view(permission='readwrite')
-    def patch(self):
-        record = self.fetch_record(self.record_id)
-        self._raise_412_if_modified(record)
-
-        changes = self.request.json
-
-        updated = self.apply_changes(record, changes=changes)
-
-        updated = self.process_record(updated, old=record)
-
-        nothing_changed = not any([record.get(k) != updated.get(k)
-                                   for k in changes.keys()])
-        if nothing_changed:
-            return record
-
-        record = self.update_record(updated, old=record)
-        return record
-
-    @resource.view(permission='readwrite')
-    def delete(self):
-        record = self.fetch_record(self.record_id)
-        self._raise_412_if_modified(record)
-
-        deleted = self.delete_record(record)
-        return deleted
