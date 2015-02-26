@@ -39,7 +39,7 @@ Here are the steps you need to follow to use cliquet:
    versionning
    backoff
    errors
-
+   changelog
 
 Indices and tables
 ==================
