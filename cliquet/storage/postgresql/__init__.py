@@ -218,10 +218,19 @@ class PostgreSQL(StorageBase):
             # Create or update ?
             query = "SELECT id FROM records WHERE id = %s;"
             cursor.execute(query, (record_id,))
-            query = query_update if cursor.rowcount > 0 else query_create
+            if cursor.rowcount > 0:
+                cursor.execute(query_update, placeholders)
+                result = cursor.fetchone()
+            else:
+                cursor.execute(query_create, placeholders)
+                result = cursor.fetchone()
 
-            cursor.execute(query, placeholders)
-            result = cursor.fetchone()
+                cursor.execute('SELECT MAX(id) AS max FROM records;')
+                max_id = cursor.fetchone()['max']
+                bump_serial = """
+                ALTER SEQUENCE records_id_seq RESTART WITH %s;"
+                """
+                cursor.execute(bump_serial, (max_id,))
 
         record = record.copy()
         record[resource.id_field] = record_id

@@ -26,8 +26,9 @@ CREATE CAST (TIMESTAMP AS BIGINT)
 --
 -- Actual records
 --
+CREATE SEQUENCE records_id_seq NO MAXVALUE NO CYCLE;
 CREATE TABLE IF NOT EXISTS records (
-    id SERIAL PRIMARY KEY,
+    id INTEGER DEFAULT nextval('records_id_seq') PRIMARY KEY NOT NULL,
     user_id VARCHAR(256) NOT NULL,
     resource_name  VARCHAR(256) NOT NULL,
     last_modified TIMESTAMP NOT NULL,
