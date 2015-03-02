@@ -9,6 +9,10 @@ This document describes changes between each past release.
 
 - Nothing changed yet.
 
+1.1.1 (2015-03-03)
+------------------
+
+- Fix packaging (include .sql files) (#58)
 
 1.1 (2015-03-03)
 ----------------
