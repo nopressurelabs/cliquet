@@ -13,7 +13,6 @@ params = Service(name='fxa-oauth-params',
 def fxa_oauth_params(request):
     """Helper to give Firefox Account configuration information."""
     return {
-        'client_id': fxa_conf(request, 'client_id'),
         'oauth_uri': fxa_conf(request, 'oauth_uri'),
         'scope': fxa_conf(request, 'scope'),
     }

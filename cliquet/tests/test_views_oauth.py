@@ -98,10 +98,8 @@ class ParamsViewTest(BaseWebTest, unittest.TestCase):
     def test_params_view_give_back_needed_values(self):
         settings = self.app.app.registry.settings
         oauth_endpoint = settings.get('fxa-oauth.oauth_uri')
-        client_id = settings.get('fxa-oauth.client_id')
         scope = settings.get('fxa-oauth.scope')
         expected_body = {
-            "client_id": client_id,
             "oauth_uri": oauth_endpoint,
             "scope": scope
         }
