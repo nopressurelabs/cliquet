@@ -48,10 +48,11 @@ class StorageBase(object):
         :returns: ``True`` is everything is ok, ``False`` otherwise.
         :rtype: bool
         """
-        from cliquet.resource import BaseResource
+        from cliquet.resource import Resource
 
-        resource = BaseResource(request)
+        resource = Resource(request)
         resource.name = _HEARTBEAT_RESOURCE_NAME
+
         try:
             if random.random() < _HEARTBEAT_DELETE_RATE:
                 self.delete_all(resource, _HEARTBEAT_USER_ID)
@@ -70,7 +71,7 @@ class StorageBase(object):
             This should take deleted records into account.
 
         :param resource: the record associated resource
-        :type resource: :class:`cliquet.resource.BaseResource`
+        :type resource: :class:`cliquet.resource.Resource`
 
         :param str user_id: the owner of the record
 
@@ -82,7 +83,7 @@ class StorageBase(object):
     def create(self, resource, user_id, record):
         """Create the specified `record` in this `resource` for this `user_id`.
         Assign the id to the record, using the attribute
-        :attr:`cliquet.resource.BaseResource.id_field`.
+        :attr:`cliquet.resource.Resource.id_field`.
 
         .. note::
 
@@ -91,7 +92,7 @@ class StorageBase(object):
         :raises: :exc:`cliquet.storage.exceptions.UnicityError`
 
         :param resource: the record associated resource
-        :type resource: :class:`cliquet.resource.BaseResource`
+        :type resource: :class:`cliquet.resource.Resource`
 
         :param str user_id: the owner of the record
         :param dict record: the record to create.
@@ -108,7 +109,7 @@ class StorageBase(object):
         :raises: :exc:`cliquet.storage.exceptions.RecordNotFoundError`
 
         :param resource: the record associated resource
-        :type resource: :class:`cliquet.resource.BaseResource`
+        :type resource: :class:`cliquet.resource.Resource`
 
         :param str user_id: the owner of the record
         :param str record_id: unique identifier of the record
@@ -131,7 +132,7 @@ class StorageBase(object):
         :raises: :exc:`cliquet.storage.exceptions.UnicityError`
 
         :param resource: the record associated resource
-        :type resource: :class:`cliquet.resource.BaseResource`
+        :type resource: :class:`cliquet.resource.Resource`
 
         :param str user_id: the owner of the record
         :param str record_id: unique identifier of the record
@@ -157,7 +158,7 @@ class StorageBase(object):
         :raises: :exc:`cliquet.storage.exceptions.RecordNotFoundError`
 
         :param resource: the record associated resource
-        :type resource: :class:`cliquet.resource.BaseResource`
+        :type resource: :class:`cliquet.resource.Resource`
 
         :param str user_id: the owner of the record
         :param str record_id: unique identifier of the record
@@ -171,7 +172,7 @@ class StorageBase(object):
         """Delete all records in this `resource` for this `user_id`.
 
         :param resource: the record associated resource
-        :type resource: :class:`cliquet.resource.BaseResource`
+        :type resource: :class:`cliquet.resource.Resource`
 
         :param str user_id: the owner of the record
 
@@ -188,7 +189,7 @@ class StorageBase(object):
         """Retrieve all records in this `resource` for this `user_id`.
 
         :param resource: the record associated resource
-        :type resource: :class:`cliquet.resource.BaseResource`
+        :type resource: :class:`cliquet.resource.Resource`
 
         :param str user_id: the owner of the record
 

@@ -1,11 +1,11 @@
-from cliquet.resource import BaseResource, ResourceSchema, crud
 import colander
 
+from cliquet.resource import Resource, Schema, crud
 
-class MushroomSchema(ResourceSchema):
+class MushroomSchema(Schema):
     name = colander.SchemaNode(colander.String())
 
 
 @crud()
-class Mushroom(BaseResource):
+class Mushroom(Resource):
     mapping = MushroomSchema()

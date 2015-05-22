@@ -4,7 +4,7 @@ import time
 import six
 from pyramid import httpexceptions
 
-from cliquet.resource import BaseResource
+from cliquet.resource import Resource
 from cliquet.tests.resource import BaseTest
 from cliquet.tests.support import ThreadMixin
 
@@ -34,7 +34,7 @@ class SinceModifiedTest(ThreadMixin, BaseTest):
         result = self.resource.collection_post()
         modification = result['last_modified']
 
-        self.resource = BaseResource(self.get_request())
+        self.resource = Resource(self.get_request())
         self.resource.collection_get()
         header = int(self.last_response.headers['Last-Modified'])
         self.assertEqual(header, modification)

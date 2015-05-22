@@ -12,7 +12,7 @@ from cliquet import logger
 from cliquet.storage import exceptions as storage_exceptions, Filter, Sort
 from cliquet.errors import (http_error, raise_invalid, ERRORS,
                             json_error_handler)
-from cliquet.schema import ResourceSchema
+from cliquet.schema import Schema
 from cliquet.utils import (
     COMPARISON, classname, native_value, decode64, encode64, json,
     current_service
@@ -31,11 +31,10 @@ def crud(**kwargs):
     .. code-block:: python
 
             from cliquet import resource
-
             @resource.crud(collection_path='/stories',
                            path='/stories/{id}',
                            description='My favorite stories')
-            class Story(resource.BaseResource):
+            class Story(resource.Resource):
                 ...
     """
     def wrapper(klass):
@@ -52,9 +51,9 @@ def crud(**kwargs):
     return wrapper
 
 
-class BaseResource(object):
+class Resource(object):
     """Base resource class providing every endpoint."""
-    mapping = ResourceSchema()
+    mapping = Schema()
     """Schema to validate records."""
 
     validate_schema_for = ('POST', 'PUT')
@@ -97,7 +96,7 @@ class BaseResource(object):
         """Resource schema, depending on HTTP verb.
 
         :returns: a :class:`~cornice:cornice.schemas.CorniceSchema` object
-            built from this resource :attr:`mapping <.BaseResource.mapping>`.
+            built from this resource :attr:`mapping <.Resource.mapping>`.
         """
         colander_schema = self.mapping
 
@@ -141,7 +140,7 @@ class BaseResource(object):
         .. seealso::
 
             Add custom behaviour by overriding
-            :meth:`cliquet.resource.BaseResource.get_records`
+            :meth:`cliquet.resource.Resource.get_records`
         """
         self._add_timestamp_header(self.request.response)
         self._raise_304_if_not_modified()
@@ -176,8 +175,8 @@ class BaseResource(object):
         .. seealso::
 
             Add custom behaviour by overriding
-            :meth:`cliquet.resource.BaseResource.process_record` or
-            :meth:`cliquet.resource.BaseResource.create_record`
+            :meth:`cliquet.resource.Resource.process_record` or
+            :meth:`cliquet.resource.Resource.create_record`
         """
         self._raise_412_if_modified()
 
@@ -205,7 +204,7 @@ class BaseResource(object):
         .. seealso::
 
             Add custom behaviour by overriding
-            :meth:`cliquet.resource.BaseResource.delete_records`.
+            :meth:`cliquet.resource.Resource.delete_records`.
         """
         settings = self.request.registry.settings
         enabled = settings['cliquet.delete_collection_enabled']
@@ -239,7 +238,7 @@ class BaseResource(object):
         .. seealso::
 
             Add custom behaviour by overriding
-            :meth:`cliquet.resource.BaseResource.get_record`.
+            :meth:`cliquet.resource.Resource.get_record`.
         """
         self._raise_400_if_invalid_id(self.record_id)
         self._add_timestamp_header(self.request.response)
@@ -262,8 +261,8 @@ class BaseResource(object):
         .. seealso::
 
             Add custom behaviour by overriding
-            :meth:`cliquet.resource.BaseResource.process_record` or
-            :meth:`cliquet.resource.BaseResource.update_record`.
+            :meth:`cliquet.resource.Resource.process_record` or
+            :meth:`cliquet.resource.Resource.update_record`.
         """
         self._raise_400_if_invalid_id(self.record_id)
         try:
@@ -307,10 +306,10 @@ class BaseResource(object):
 
         .. seealso::
             Add custom behaviour by overriding
-            :meth:`cliquet.resource.BaseResource.get_record`,
-            :meth:`cliquet.resource.BaseResource.apply_changes`,
-            :meth:`cliquet.resource.BaseResource.process_record` or
-            :meth:`cliquet.resource.BaseResource.update_record`.
+            :meth:`cliquet.resource.Resource.get_record`,
+            :meth:`cliquet.resource.Resource.apply_changes`,
+            :meth:`cliquet.resource.Resource.process_record` or
+            :meth:`cliquet.resource.Resource.update_record`.
         """
         self._raise_400_if_invalid_id(self.record_id)
         old_record = self.get_record(self.record_id)
@@ -363,8 +362,8 @@ class BaseResource(object):
 
         .. seealso::
             Add custom behaviour by overriding
-            :meth:`cliquet.resource.BaseResource.get_record` or
-            :meth:`cliquet.resource.BaseResource.delete_record`,
+            :meth:`cliquet.resource.Resource.get_record` or
+            :meth:`cliquet.resource.Resource.delete_record`,
         """
         self._raise_400_if_invalid_id(self.record_id)
         record = self.get_record(self.record_id)

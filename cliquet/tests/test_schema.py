@@ -26,10 +26,10 @@ class URLTest(unittest.TestCase):
                           url)
 
 
-class ResourceSchemaTest(unittest.TestCase):
+class SchemaTest(unittest.TestCase):
 
     def test_preserves_unknown_fields_when_specified(self):
-        class PreserveSchema(schema.ResourceSchema):
+        class PreserveSchema(schema.Schema):
             class Options:
                 preserve_unknown = True
 
@@ -39,7 +39,7 @@ class ResourceSchemaTest(unittest.TestCase):
         self.assertEquals(deserialized['foo'], 'bar')
 
     def test_ignore_unknwon_fields_when_specified(self):
-        class PreserveSchema(schema.ResourceSchema):
+        class PreserveSchema(schema.Schema):
             class Options:
                 preserve_unknown = False
 
@@ -48,12 +48,12 @@ class ResourceSchemaTest(unittest.TestCase):
         self.assertNotIn('foo', deserialized)
 
     def test_ignore_unknwon_fields_by_default(self):
-        schema_instance = schema.ResourceSchema()
+        schema_instance = schema.Schema()
         deserialized = schema_instance.deserialize({'foo': 'bar'})
         self.assertNotIn('foo', deserialized)
 
     def test_options_parameters_use_default_value_when_subclassed(self):
-        class PreserveSchema(schema.ResourceSchema):
+        class PreserveSchema(schema.Schema):
             class Options:
                 pass
 

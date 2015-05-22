@@ -2,7 +2,7 @@ import mock
 
 from cliquet.storage import memory
 from cliquet.tests.support import unittest, DummyRequest
-from cliquet.resource import BaseResource
+from cliquet.resource import Resource
 
 
 class BaseTest(unittest.TestCase):
@@ -11,7 +11,7 @@ class BaseTest(unittest.TestCase):
         self.storage = memory.Memory()
 
     def setUp(self):
-        self.resource = BaseResource(self.get_request())
+        self.resource = Resource(self.get_request())
         self.patch_known_field = mock.patch.object(self.resource,
                                                    'is_known_field')
 

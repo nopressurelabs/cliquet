@@ -2,7 +2,7 @@ import six
 from pyramid import httpexceptions
 
 from cliquet.errors import ERRORS
-from cliquet.resource import BaseResource
+from cliquet.resource import Resource
 from cliquet.tests.resource import BaseTest
 
 
@@ -11,7 +11,7 @@ class NotModifiedTest(BaseTest):
         super(NotModifiedTest, self).setUp()
         self.stored = self.storage.create(self.resource, 'bob', {})
 
-        self.resource = BaseResource(self.get_request())
+        self.resource = Resource(self.get_request())
         self.resource.collection_get()
         current = self.last_response.headers['Last-Modified']
         self.resource.request.headers['If-Modified-Since'] = current

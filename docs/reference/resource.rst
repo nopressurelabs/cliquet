@@ -20,7 +20,7 @@ Full example
     from cliquet import utils
 
 
-    class BookmarkSchema(resource.ResourceSchema):
+    class BookmarkSchema(resource.Schema):
         url = schema.URL()
         title = colander.SchemaNode(colander.String())
         favorite = colander.SchemaNode(colander.Boolean(), missing=False)
@@ -32,7 +32,7 @@ Full example
 
 
     @resource.crud()
-    class Bookmark(resource.BaseResource):
+    class Bookmark(resource.Resource):
         mapping = BookmarkSchema()
 
         def process_record(self, new, old=None):
@@ -47,14 +47,14 @@ See the :github:`ReadingList <mozilla-services/readinglist>` and
 
 .. _resource-schema:
 
-Resource Schema
-===============
+Schema
+======
 
 Override the base schema to add extra fields using the `Colander API <http://docs.pylonsproject.org/projects/colander/>`_.
 
 .. code-block:: python
 
-    class Movie(ResourceSchema):
+    class Movie(Schema):
         director = colander.SchemaNode(colander.String())
         year = colander.SchemaNode(colander.Int(),
                                    validator=colander.Range(min=1850))
@@ -99,7 +99,7 @@ or at the resource level:
 
 
     @resource.crud()
-    class Mushroom(resource.BaseResource):
+    class Mushroom(resource.Resource):
         id_generator = MsecId()
 
 

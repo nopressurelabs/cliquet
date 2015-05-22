@@ -56,7 +56,7 @@ Storage can be used to store arbitrary data.
 
 .. code-block:: python
 
-    custom = BaseResource(request)
+    custom = Resource(request)
     custom.name = '__custom'
 
     data = {'subscribed': datetime.now()}

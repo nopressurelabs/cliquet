@@ -101,7 +101,7 @@ python API !
 Define resources
 ================
 
-In order to define a resource, just inherit from :class:`cliquet.resource.BaseResource`,
+In order to define a resource, just inherit from :class:`cliquet.resource.Resource`,
 in :file:`myproject/views.py` for example:
 
 .. code-block:: python
@@ -109,7 +109,7 @@ in :file:`myproject/views.py` for example:
     from cliquet import resource
 
     @resource.crud()
-    class Mushroom(resource.BaseResource):
+    class Mushroom(resource.Resource):
         # No schema yet.
         pass
 
@@ -156,12 +156,12 @@ Currently, only :rtd:`Colander <colander>` is supported, and it looks like this:
     from cliquet import resource
 
 
-    class MushroomSchema(resource.ResourceSchema):
+    class MushroomSchema(resource.Schema):
         name = colander.SchemaNode(colander.String())
 
 
     @resource.crud()
-    class Mushroom(resource.BaseResource):
+    class Mushroom(resource.Resource):
         mapping = MushroomSchema()
 
 

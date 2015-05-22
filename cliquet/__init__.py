@@ -2,8 +2,8 @@
 """
 import warnings
 import pkg_resources
-
 import structlog
+
 from cornice import Service
 from pyramid.settings import asbool, aslist
 
@@ -13,7 +13,8 @@ logger = structlog.get_logger()
 from cliquet import utils
 from cliquet.initialization import (  # NOQA
     initialize, initialize_cliquet, install_middlewares)
-
+from cliquet import resource
+from cliquet import logger
 
 # Module version, as defined in PEP-0396.
 __version__ = pkg_resources.get_distribution(__package__).version

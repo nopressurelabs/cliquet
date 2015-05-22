@@ -253,7 +253,7 @@ Indexed resource in :file:`cliquet_indexing/resource.py`:
 
 .. code-block:: python
 
-    class IndexedResource(cliquet.resource.BaseResource):
+    class IndexedResource(cliquet.resource.Resource):
         def create_record(self, record):
             r = super(IndexedResource, self).create_record(self, record)
 

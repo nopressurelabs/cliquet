@@ -67,7 +67,7 @@ class StorageBaseTest(unittest.TestCase):
         self.assertEqual(str(error), "ValueError: Pool Error")
 
 
-class TestMapping(schema.ResourceSchema):
+class TestMapping(schema.Schema):
     class Options:
         pass
 
