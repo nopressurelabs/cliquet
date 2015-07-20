@@ -228,7 +228,7 @@ Using:
 
     from cliquet import resource, schema
 
-    class BookmarkSchema(schema.ResourceSchema):
+    class BookmarkSchema(schema.Schema):
         url = schema.URL()
 
     @resource.register()
@@ -287,7 +287,7 @@ Using:
 
     import colander
 
-    class BookmarkSchema(resource.ResourceSchema):
+    class BookmarkSchema(resource.Schema):
         url = schema.URL()
         title = colander.SchemaNode(colander.String())
         device = colander.SchemaNode(colander.String(), missing='')

@@ -2,7 +2,7 @@ from cliquet import resource
 import colander
 
 
-class MushroomSchema(resource.ResourceSchema):
+class MushroomSchema(resource.Schema):
     name = colander.SchemaNode(colander.String())
 
 
@@ -22,7 +22,7 @@ class Moisture(resource.ProtectedResource):
     pass
 
 
-class PsilocybinSchema(resource.ResourceSchema):
+class PsilocybinSchema(resource.Schema):
     # Optional fields.
     edible = colander.SchemaNode(colander.Boolean(), missing=True)
 

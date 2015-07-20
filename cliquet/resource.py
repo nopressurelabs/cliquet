@@ -291,7 +291,7 @@ class BaseResource(object):
     default_viewset = ViewSet
     """Default viewset class to use when the resource is registered."""
 
-    mapping = ResourceSchema()
+    mapping = Schema()
     """Schema to validate records."""
 
     def __init__(self, request, context=None):

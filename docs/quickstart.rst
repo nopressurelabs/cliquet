@@ -177,7 +177,7 @@ Currently, only :rtd:`Colander <colander>` is supported, and it looks like this:
     from cliquet import resource
 
 
-    class MushroomSchema(resource.ResourceSchema):
+    class MushroomSchema(resource.Schema):
         name = colander.SchemaNode(colander.String())
 
 

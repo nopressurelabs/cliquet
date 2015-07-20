@@ -16,6 +16,7 @@ from cliquet import errors
 from cliquet.initialization import (  # NOQA
     initialize, initialize_cliquet, install_middlewares)
 
+__all__ = ['utils', 'errors', 'resource']
 
 # Module version, as defined in PEP-0396.
 __version__ = pkg_resources.get_distribution(__package__).version

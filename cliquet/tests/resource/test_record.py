@@ -4,7 +4,7 @@ import colander
 from pyramid import httpexceptions
 
 from cliquet.resource import BaseResource
-from cliquet.schema import ResourceSchema
+from cliquet.schema import Schema
 from cliquet.errors import ERRORS
 from cliquet.tests.resource import BaseTest
 
@@ -98,7 +98,7 @@ class PatchTest(BaseTest):
         self.stored = self.collection.create_record({})
         self.resource.record_id = self.stored['id']
         self.resource.request.json = {'data': {'position': 10}}
-        schema = ResourceSchema()
+        schema = Schema()
         schema.add(colander.SchemaNode(colander.Boolean(), name='unread',
                                        missing=colander.drop))
         schema.add(colander.SchemaNode(colander.Int(), name='position',
