@@ -11,7 +11,7 @@ from cliquet import authorization
 from cliquet import logger
 from cliquet import Service
 from cliquet.collection import Collection
-from cliquet.errors import http_error, raise_invalid, send_alert, ERRORS
+from cliquet.errors import http_error, raise_invalid, ERRORS
 from cliquet.schema import ResourceSchema, PermissionsSchema
 from cliquet.storage import exceptions as storage_exceptions, Filter, Sort
 from cliquet.utils import (
@@ -291,7 +291,7 @@ class BaseResource(object):
     default_viewset = ViewSet
     """Default viewset class to use when the resource is registered."""
 
-    mapping = Schema()
+    mapping = ResourceSchema()
     """Schema to validate records."""
 
     def __init__(self, request, context=None):

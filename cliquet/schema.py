@@ -4,7 +4,7 @@ from colander import SchemaNode, String
 from cliquet.utils import strip_whitespace, msec_time
 
 
-class Schema(colander.MappingSchema):
+class ResourceSchema(colander.MappingSchema):
     """Base resource schema, with *Cliquet* specific built-in options."""
 
     class Options:
@@ -15,7 +15,7 @@ class Schema(colander.MappingSchema):
 
         .. code-block:: python
 
-            class Product(Schema):
+            class Product(ResourceSchema):
                 reference = colander.SchemaNode(colander.String())
 
                 class Options:
@@ -43,12 +43,12 @@ class Schema(colander.MappingSchema):
 
         .. code-block:: python
 
-            class SchemaLess(Schema):
+            class SchemaLess(ResourceSchema):
                 class Options:
                     preserve_unknown = True
         """
     def get_option(self, attr):
-        default_value = getattr(Schema.Options, attr)
+        default_value = getattr(ResourceSchema.Options, attr)
         return getattr(self.Options, attr,  default_value)
 
     def is_readonly(self, field):
@@ -121,7 +121,7 @@ class TimeStamp(colander.SchemaNode):
 
     .. code-block:: python
 
-        class Book(Schema):
+        class Book(ResourceSchema):
             added_on = TimeStamp()
             read_on = TimeStamp(auto_now=False, missing=-1)
     """
@@ -149,7 +149,7 @@ class URL(SchemaNode):
 
     .. code-block:: python
 
-        class BookmarkSchema(Schema):
+        class BookmarkSchema(ResourceSchema):
             url = URL()
     """
     schema_type = String

@@ -20,7 +20,7 @@ Full example
     from cliquet import utils
 
 
-    class BookmarkSchema(resource.Schema):
+    class BookmarkSchema(resource.ResourceSchema):
         url = schema.URL()
         title = colander.SchemaNode(colander.String())
         favorite = colander.SchemaNode(colander.Boolean(), missing=False)
@@ -54,7 +54,7 @@ Override the base schema to add extra fields using the `Colander API <http://doc
 
 .. code-block:: python
 
-    class Movie(Schema):
+    class Movie(ResourceSchema):
         director = colander.SchemaNode(colander.String())
         year = colander.SchemaNode(colander.Int(),
                                    validator=colander.Range(min=1850))
